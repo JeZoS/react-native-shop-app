@@ -41,19 +41,36 @@ const ProductsOverviewScreen = (props) => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = {
-  headerTitle: "All products",
-  headerRight: () => (
-    <HeaderButtons
-      HeaderButtonComponent={CustomHeaderButton}
-    >
-      <Item
-        title="cart"
-        iconName="md-cart"
-        onPress={() => {}}
-      />
-    </HeaderButtons>
-  ),
+ProductsOverviewScreen.navigationOptions = (navData) => {
+  return {
+    headerTitle: "All products",
+    headerRight: () => (
+      <HeaderButtons
+        HeaderButtonComponent={CustomHeaderButton}
+      >
+        <Item
+          title="Your cart"
+          iconName="md-cart"
+          onPress={() => {
+            navData.navigation.navigate("cart");
+          }}
+        />
+      </HeaderButtons>
+    ),
+    headerLeft: () => (
+      <HeaderButtons
+        HeaderButtonComponent={CustomHeaderButton}
+      >
+        <Item
+          title="Your orders"
+          iconName="md-menu"
+          onPress={() => {
+            navData.navigation.toggleDrawer();
+          }}
+        />
+      </HeaderButtons>
+    ),
+  };
 };
 
 export default ProductsOverviewScreen;
