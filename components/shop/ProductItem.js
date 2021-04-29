@@ -1,96 +1,87 @@
-import React from "react";
+import React from 'react';
 import {
-  StyleSheet,
-  Image,
-  Text,
   View,
-  Button,
+  Text,
+  Image,
+  StyleSheet,
   TouchableOpacity,
   TouchableNativeFeedback,
-  Platform,
-} from "react-native";
-import Colors from "../../constants/Colors";
+  Platform
+} from 'react-native';
 
-const ProductItem = (props) => {
-  let Touchablecmp = TouchableOpacity;
+import Card from '../UI/Card';
 
-  if (Platform.OS === "android" && Platform.Version >= 21) {
-    Touchablecmp = TouchableNativeFeedback;
+const ProductItem = props => {
+  let TouchableCmp = TouchableOpacity;
+
+  if (Platform.OS === 'android' && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
   }
 
   return (
-    <View style={styles.product}>
+    <Card style={styles.product}>
       <View style={styles.touchable}>
-        <Touchablecmp
-          onPress={props.onViewDetail}
-          useForeground
-        >
+        <TouchableCmp onPress={props.onSelect} useForeground>
           <View>
-            <Image
-              style={styles.image}
-              source={{ uri: props.image }}
-            />
-            <View style={styles.details}>
-              <Text style={styles.title}>
-                {props.title}
-              </Text>
-              <Text style={styles.price}>
-                ${props.price.toFixed(2)}
-              </Text>
+            <View style={styles.imageContainer}>
+              <Image style={styles.image} source={{ uri: props.image }} />
             </View>
-            <View style={styles.action}>
-              <Button
-                color={Colors.primary}
-                title="View Details"
-                onPress={props.onViewDetail}
-              />
-              <Button
-                color={Colors.primary}
-                title="Add To Cart"
-                onPress={props.onAddToCart}
-              />
+            <View style={styles.details}>
+              <Text style={styles.title}>{props.title}</Text>
+              <Text style={styles.price}>${props.price.toFixed(2)}</Text>
+            </View>
+            <View style={styles.actions}>
+              {props.children}
             </View>
           </View>
-        </Touchablecmp>
+        </TouchableCmp>
       </View>
-    </View>
+    </Card>
   );
 };
 
-export default ProductItem;
-
 const styles = StyleSheet.create({
   product: {
-    elevation: 5,
-    borderRadius: 10,
-    backgroundColor: "white",
     height: 300,
-    margin: 20,
+    margin: 20
   },
   touchable: {
-    overflow: "hidden",
     borderRadius: 10,
+    overflow: 'hidden'
+  },
+  imageContainer: {
+    width: '100%',
+    height: '60%',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    overflow: 'hidden'
   },
   image: {
-    height: "60%",
-    width: "100%",
-  },
-  title: { fontSize: 18, margin: 4 },
-  price: {
-    fontSize: 14,
-    color: "#888",
-  },
-  action: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    height: "25%",
-    paddingHorizontal: 20,
-    paddingBottom:20
+    width: '100%',
+    height: '100%'
   },
   details: {
-    marginVertical: 4,
-    alignItems: "center",
-    height: "15%",
+    alignItems: 'center',
+    height: '17%',
+    padding: 10
   },
+  title: {
+    fontFamily: 'open-sans-bold',
+    fontSize: 18,
+    marginVertical: 2
+  },
+  price: {
+    fontFamily: 'open-sans',
+    fontSize: 14,
+    color: '#888'
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '23%',
+    paddingHorizontal: 20
+  }
 });
+
+export default ProductItem;

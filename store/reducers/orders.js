@@ -1,7 +1,8 @@
-import { ADD_ORDER } from "../actions/orders";
-import Order from "../../models/order";
+import { ADD_ORDER } from '../actions/orders';
+import Order from '../../models/order';
+
 const initialState = {
-  orders: [],
+  orders: []
 };
 
 export default (state = initialState, action) => {
@@ -15,10 +16,9 @@ export default (state = initialState, action) => {
       );
       return {
         ...state,
-        orders: state.orders.concat(newOrder),
+        orders: state.orders.concat(newOrder)
       };
-    default:
-      return state;
   }
+
   return state;
 };

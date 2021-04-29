@@ -11,7 +11,7 @@ import ordersReducer from "./store/reducers/orders";
 const rootreducer = combineReducers({
   products: productsReducer,
   cart: cartReducer,
-  order: ordersReducer,
+  orders: ordersReducer,
 });
 
 const store = createStore(rootreducer);
@@ -38,7 +38,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <ShopNavigator />
+          <ShopNavigator />
     </Provider>
   );
 }

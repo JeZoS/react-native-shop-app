@@ -1,79 +1,70 @@
-import React from "react";
+import React from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
   ScrollView,
-  Button,
+  View,
+  Text,
   Image,
-} from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import Colors from "../../constants/Colors";
-import { addToCart } from "../../store/actions/cart";
+  Button,
+  StyleSheet
+} from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 
-const ProductsDetailScreen = (props) => {
-  const productId = props.navigation.getParam("productId");
+import Colors from '../../constants/Colors';
+import * as cartActions from '../../store/actions/cart';
 
-  const selectedProduct = useSelector((state) =>
-    state.products.availableProducts.find(
-      (prod) => prod.id === productId
-    )
+const ProductDetailScreen = props => {
+  const productId = props.navigation.getParam('productId');
+  const selectedProduct = useSelector(state =>
+    state.products.availableProducts.find(prod => prod.id === productId)
   );
-
   const dispatch = useDispatch();
 
   return (
     <ScrollView>
-      <Image
-        style={styles.image}
-        source={{ uri: selectedProduct.imageUrl }}
-      />
+      <Image style={styles.image} source={{ uri: selectedProduct.imageUrl }} />
       <View style={styles.actions}>
         <Button
           color={Colors.primary}
-          title="Add to cart"
-          onPress={() =>
-            dispatch(addToCart(selectedProduct))
-          }
+          title="Add to Cart"
+          onPress={() => {
+            dispatch(cartActions.addToCart(selectedProduct));
+          }}
         />
       </View>
-      <Text style={styles.price}>
-        ${selectedProduct.price}
-      </Text>
-      <Text style={styles.description}>
-        {selectedProduct.description}
-      </Text>
+      <Text style={styles.price}>${selectedProduct.price.toFixed(2)}</Text>
+      <Text style={styles.description}>{selectedProduct.description}</Text>
     </ScrollView>
   );
 };
 
-ProductsDetailScreen.navigationOptions = (navData) => {
-  const title = navData.navigation.getParam("productTitle");
+ProductDetailScreen.navigationOptions = navData => {
   return {
-    headerTitle: title,
+    headerTitle: navData.navigation.getParam('productTitle')
   };
 };
 
-export default ProductsDetailScreen;
-
 const styles = StyleSheet.create({
   image: {
-    width: "100%",
-    height: 300,
-  },
-  price: {
-    fontSize: 20,
-    color: "#888",
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  description: {
-    fontSize: 14,
-    textAlign: "center",
-    marginHorizontal: 20,
+    width: '100%',
+    height: 300
   },
   actions: {
     marginVertical: 10,
-    alignItems: "center",
+    alignItems: 'center'
   },
+  price: {
+    fontSize: 20,
+    color: '#888',
+    textAlign: 'center',
+    marginVertical: 20,
+    fontFamily: 'open-sans-bold'
+  },
+  description: {
+    fontFamily: 'open-sans',
+    fontSize: 14,
+    textAlign: 'center',
+    marginHorizontal: 20
+  }
 });
+
+export default ProductDetailScreen;

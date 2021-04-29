@@ -1,61 +1,62 @@
-import React from "react";
-import {
-  StyleSheet,
-  Button,
-  Text,
-  View,
-} from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { useDispatch, useSelector } from "react-redux";
-import Colors from "../../constants/Colors";
-import CartItem from "../../components/shop/cartItem";
-import { removeFromCart } from "../../store/actions/cart";
-import { addOrder } from "../../store/actions/orders";
+import React from 'react';
+import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 
-const CartScreen = (props) => {
-  const cartItems = useSelector((state) => state.cart);
-  const { items, totalAmount } = cartItems;
-  const cart = [];
+import Colors from '../../constants/Colors';
+import CartItem from '../../components/shop/cartItem';
+import Card from '../../components/UI/Card';
+import * as cartActions from '../../store/actions/cart';
+import * as ordersActions from '../../store/actions/orders';
+
+const CartScreen = props => {
+  const cartTotalAmount = useSelector(state => state.cart.totalAmount);
+  const cartItems = useSelector(state => {
+    const transformedCartItems = [];
+    for (const key in state.cart.items) {
+      transformedCartItems.push({
+        productId: key,
+        productTitle: state.cart.items[key].productTitle,
+        productPrice: state.cart.items[key].productPrice,
+        quantity: state.cart.items[key].quantity,
+        sum: state.cart.items[key].sum
+      });
+    }
+    return transformedCartItems.sort((a, b) =>
+      a.productId > b.productId ? 1 : -1
+    );
+  });
   const dispatch = useDispatch();
-  for (const key in items) {
-    cart.push({
-      productId: key,
-      productTitle: items[key].productTitle,
-      productPrice: items[key].productPrice,
-      sum: items[key].sum,
-      quantity: items[key].quantity,
-    });
-  }
-  cart.sort((a, b) => (a.productId > b.productId ? a : b));
+
   return (
     <View style={styles.screen}>
-      <View style={styles.summary}>
+      <Card style={styles.summary}>
         <Text style={styles.summaryText}>
-          Total:{" "}
+          Total:{' '}
           <Text style={styles.amount}>
-            ${totalAmount.toFixed(2)}
+            ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
           </Text>
         </Text>
         <Button
-          title="Order Now"
           color={Colors.accent}
+          title="Order Now"
+          disabled={cartItems.length === 0}
           onPress={() => {
-            dispatch(addOrder(cart, totalAmount));
+            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
           }}
-          disabled={cart.length > 0 ? false : true}
         />
-      </View>
+      </Card>
       <FlatList
-        data={cart}
-        keyExtractor={(item) => item.productId}
-        renderItem={(itemData) => (
+        data={cartItems}
+        keyExtractor={item => item.productId}
+        renderItem={itemData => (
           <CartItem
+            quantity={itemData.item.quantity}
+            title={itemData.item.productTitle}
+            amount={itemData.item.sum}
+            deletable
             onRemove={() => {
-              dispatch(
-                removeFromCart(itemData.item.productId)
-              );
+              dispatch(cartActions.removeFromCart(itemData.item.productId));
             }}
-            item={itemData.item}
           />
         )}
       />
@@ -64,33 +65,27 @@ const CartScreen = (props) => {
 };
 
 CartScreen.navigationOptions = {
-    headerTitle: "Your Cart",
-  };
-
-export default CartScreen;
+  headerTitle: 'Your Cart'
+};
 
 const styles = StyleSheet.create({
   screen: {
-    margin: 20,
+    margin: 20
   },
   summary: {
-    flexDirection: "row",
-    padding: 20,
-    // shadowColor: "black",
-    // shadowOpacity: 0.26,
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowRadius: 8,
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
-    elevation: 5,
-    borderRadius: 10,
-    // backgroundColor: "gray",
+    padding: 10
   },
   summaryText: {
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
+    fontSize: 18
   },
   amount: {
-    color: Colors.primary,
-  },
+    color: Colors.primary
+  }
 });
+
+export default CartScreen;

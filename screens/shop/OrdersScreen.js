@@ -1,45 +1,44 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  HeaderButtons,
-  Item,
-} from "react-navigation-header-buttons";
-import { useSelector } from "react-redux";
-import CustomHeaderButton from "../../components/UI/HeaderButton";
+import React from 'react';
+import { FlatList, Text, Platform } from 'react-native';
+import { useSelector } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-const OrdersScreen = (props) => {
-  const orders = useSelector((state) => state.order.orders);
+import HeaderButton from '../../components/UI/HeaderButton';
+import OrderItem from '../../components/shop/OrderItem';
+
+const OrdersScreen = props => {
+  const orders = useSelector(state => state.orders.orders);
+
   return (
     <FlatList
       data={orders}
-      keyExtractor={(item) => item.id}
-      renderItem={(itemData) => (
-        <Text>itemData.item.totalAmount</Text>
+      keyExtractor={item => item.id}
+      renderItem={itemData => (
+        <OrderItem
+          amount={itemData.item.totalAmount}
+          date={itemData.item.readableDate}
+          items={itemData.item.items}
+        />
       )}
     />
   );
 };
 
-OrdersScreen.navigationOptions = (navData) => {
+OrdersScreen.navigationOptions = navData => {
   return {
-    headerTitle: "Your Orders",
-    headerLeft: () => (
-      <HeaderButtons
-        HeaderButtonComponent={CustomHeaderButton}
-      >
+    headerTitle: 'Your Orders',
+    headerLeft: ()=> (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Your orders"
-          iconName="md-menu"
+          title="Menu"
+          iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
           onPress={() => {
             navData.navigation.toggleDrawer();
           }}
         />
       </HeaderButtons>
-    ),
+    )
   };
 };
 
 export default OrdersScreen;
-
-const styles = StyleSheet.create({});
