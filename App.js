@@ -12,11 +12,12 @@ import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 import ordersReducer from "./store/reducers/orders";
 import Thunk from "redux-thunk";
-
+import authReducer from "./store/reducers/auth";
 const rootreducer = combineReducers({
   products: productsReducer,
   cart: cartReducer,
   orders: ordersReducer,
+  auth: authReducer,
 });
 
 const store = createStore(
