@@ -1,17 +1,18 @@
-import Order from '../../models/order';
+import Order from "../../models/order";
 
-export const ADD_ORDER = 'ADD_ORDER';
-export const SET_ORDERS = 'SET_ORDERS';
+export const ADD_ORDER = "ADD_ORDER";
+export const SET_ORDERS = "SET_ORDERS";
 
 export const fetchOrders = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const { token, userId } = getState().auth;
     try {
       const response = await fetch(
-        'https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//orders/u1.json'
+        `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//orders/${userId}.json?auth=${token}`
       );
 
       if (!response.ok) {
-        throw new Error('Something went wrong!');
+        throw new Error("Something went wrong!");
       }
 
       const resData = await response.json();
@@ -35,25 +36,26 @@ export const fetchOrders = () => {
 };
 
 export const addOrder = (cartItems, totalAmount) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const { token, userId } = getState().auth;
     const date = new Date();
     const response = await fetch(
-      'https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//orders/u1.json',
+      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//orders/${userId}.json?auth=${token}`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           cartItems,
           totalAmount,
-          date: date.toISOString()
-        })
+          date: date.toISOString(),
+        }),
       }
     );
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      throw new Error("Something went wrong!");
     }
 
     const resData = await response.json();
@@ -64,8 +66,8 @@ export const addOrder = (cartItems, totalAmount) => {
         id: resData.name,
         items: cartItems,
         amount: totalAmount,
-        date: date
-      }
+        date: date,
+      },
     });
   };
 };

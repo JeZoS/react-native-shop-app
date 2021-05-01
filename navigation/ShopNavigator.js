@@ -5,17 +5,28 @@ import {
 import { createStackNavigator } from "react-navigation-stack";
 import ProductsOverviewScreen from "../screens/shop/ProductsOverviewScreen";
 import Colors from "../constants/Colors";
-import { Platform } from "react-native";
+import {
+  Button,
+  Platform,
+  SafeAreaView,
+  View,
+} from "react-native";
 import ProductsDetailScreen from "../screens/shop/ProductsDetailScreen";
 import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
-import { createDrawerNavigator } from "react-navigation-drawer";
+import {
+  createDrawerNavigator,
+  DrawerNavigatorItems,
+} from "react-navigation-drawer";
 import { Ionicons } from "@expo/vector-icons";
 import UserProductsScreen from "../screens/user/UserProductsScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 
 import React from "react";
 import AuthScreen from "../screens/user/AuthScreen";
+import StartUp from "../screens/StartUp";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/actions/auth";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -107,6 +118,29 @@ const ShopNavigator = createDrawerNavigator(
     contentOptions: {
       activeTintColor: Colors.primary,
     },
+    contentComponent: (props) => {
+      const dispatch = useDispatch();
+      return (
+        <View style={{ flex: 1, paddingTop: 30 }}>
+          <SafeAreaView
+            forceInset={{
+              top: "always",
+              horizontal: "never",
+            }}
+          >
+            <DrawerNavigatorItems {...props} />
+            <Button
+              title="Logout"
+              onPress={() => {
+                dispatch(logout());
+                props.navigation.navigate("Auth");
+              }}
+              color={Colors.primary}
+            />
+          </SafeAreaView>
+        </View>
+      );
+    },
   }
 );
 
@@ -115,6 +149,7 @@ const AuthNavigator = createStackNavigator({
 });
 
 const MainNavigator = createSwitchNavigator({
+  startup: StartUp,
   Auth: AuthNavigator,
   Shop: ShopNavigator,
 });

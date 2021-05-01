@@ -6,7 +6,8 @@ export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
 
 export const fetchProducts = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userId, token } = getState().auth;
     try {
       const response = await fetch(
         "https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products.json"
@@ -23,7 +24,7 @@ export const fetchProducts = () => {
         loadedProducts.push(
           new Product(
             key,
-            "u1",
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -35,6 +36,9 @@ export const fetchProducts = () => {
       dispatch({
         type: SET_PRODUCTS,
         products: loadedProducts,
+        userProducts: loadedProducts.filter(
+          (prod) => prod.ownerId === userId
+        ),
       });
     } catch (err) {
       throw err;
@@ -43,9 +47,10 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = (productId) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userId, token } = getState().auth;
     const response = await fetch(
-      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products/${productId}.json`,
+      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products/${productId}.json?auth=${token}`,
       {
         method: "DELETE",
       }
@@ -64,15 +69,17 @@ export const createProduct = (
   imageUrl,
   price
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userId, token } = getState().auth;
     const response = await fetch(
-      "https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products.json",
+      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products.json?auth=${token}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          ownerId: userId,
           title,
           description,
           imageUrl,
@@ -91,6 +98,7 @@ export const createProduct = (
         description,
         imageUrl,
         price,
+        ownerId: userId,
       },
     });
   };
@@ -102,9 +110,10 @@ export const updateProduct = (
   description,
   imageUrl
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userId, token } = getState().auth;
     const response = await fetch(
-      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products/${id}.json`,
+      `https://react-native-shop-app-596c8-default-rtdb.firebaseio.com//products/${id}.json?auth=${token}`,
       {
         method: "PATCH",
         headers: {

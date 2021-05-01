@@ -32,7 +32,7 @@ const ProductsOverviewScreen = (props) => {
     (state) => state.products.availableProducts
   );
   const dispatch = useDispatch();
-  WA;
+
   const loadProducts = useCallback(async () => {
     setError(null);
     setIsRefreshing(true);
